@@ -1,0 +1,7 @@
+
+# vim swap file.
+*.swp
+
+# application data files.
+/data/
+
