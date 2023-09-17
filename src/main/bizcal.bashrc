@@ -4,24 +4,7 @@ declare -r ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE}")/../.." && pwd)"
 
 function bizcal
 {
-    case "$1" in
-        help | -h | --help)
-            echo 'Not Implemented.'
-            ;;
-        updatedb)
-            bash "${ROOT_DIR}/src/scripts/updatedb.sh"
-            ;;
-        list | table | remaining-days)
-            ruby -I "${ROOT_DIR}/src/main" -r main -e main -- "$@"
-            ;;
-        '' | -*)
-            ruby -I "${ROOT_DIR}/src/main" -r main -e main -- table "$@"
-            ;;
-        *)
-            echo "Invalid arguments: [$@]" >&2
-            return 1
-            ;;
-    esac
+    ruby -I "${ROOT_DIR}/src/main" -r main -e main -- "$@"
 }
 
 function _bizcal.bash_complete

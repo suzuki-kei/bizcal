@@ -4,7 +4,9 @@ require 'date'
 require 'date_calculations'
 require 'optparse'
 
-DATA_DIR = "#{__dir__}/../../data"
+ROOT_DIR = File.expand_path("#{__dir__}/../..")
+DATA_DIR = "#{ROOT_DIR}/data"
+SCRIPTS_DIR = "#{ROOT_DIR}/src/scripts"
 
 WDAY_TO_NAME_MAP = {
     0 => 'Su',
@@ -17,21 +19,28 @@ WDAY_TO_NAME_MAP = {
 }
 
 def main
-    if ARGV.empty?
-        raise ArgumentError, 'subcommand is no specified.'
-    end
-
-    subcommand = ARGV.shift
-
-    case subcommand
+    case ARGV[0]
+        when nil
+            print_calendar_table
+        when /^-/
+            print_calendar_table
+        when 'help'
+            ARGV.shift
+            print_help
+        when 'updatedb'
+            ARGV.shift
+            update_holidays_database
         when 'list'
+            ARGV.shift
             print_calendar_list
         when 'table'
+            ARGV.shift
             print_calendar_table
         when 'remaining-days'
+            ARGV.shift
             print_remaining_days
         else
-            raise ArgumentError, "Invalid subcommand: [#{subcommand}]"
+            print_help
     end
 end
 
@@ -78,10 +87,10 @@ def get_options(mode, today = Date.today)
         end
 
         if %i(list remaining_days).include?(mode)
-            parser.on('--from=D', String) {|date|
+            parser.on('--from=DATE', String) {|date|
                 options[:from_date] = Date.parse(date)
             }
-            parser.on('--to=D', String) {|date|
+            parser.on('--to=DATE', String) {|date|
                 options[:to_date] = Date.parse(date)
             }
         end
@@ -90,6 +99,14 @@ def get_options(mode, today = Date.today)
     end
 
     options
+end
+
+def print_help
+    puts 'Not Implemented.'
+end
+
+def update_holidays_database
+    system('bash', "#{SCRIPTS_DIR}/updatedb.sh", exception: true)
 end
 
 def print_calendar_list
