@@ -88,10 +88,10 @@ def get_options(mode, today = Date.today)
 
         if %i(list remaining_days).include?(mode)
             parser.on('--from=DATE', String, '開始日を YYYY-MM-DD 形式で指定します.') {|date|
-                options[:from_date] = Date.parse(date)
+                options[:from_date] = Date.strptime(date, '%Y-%m-%d')
             }
             parser.on('--to=DATE', String, '終了日を YYYY-MM-DD 形式で指定します.') {|date|
-                options[:to_date] = Date.parse(date)
+                options[:to_date] = Date.strptime(date, '%Y-%m-%d')
             }
         end
 
