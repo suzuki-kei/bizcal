@@ -3,6 +3,7 @@ require 'colored_string'
 require 'date'
 require 'date_calculations'
 require 'optparse'
+require 'exceptions'
 
 ROOT_DIR = File.expand_path("#{__dir__}/../..")
 DATA_DIR = "#{ROOT_DIR}/data"
@@ -42,6 +43,9 @@ def main
         else
             print_help
     end
+rescue BizCalError => exception
+    $stderr.puts "[ERROR] #{exception}"
+    exit 1
 end
 
 def get_options(mode, today = Date.today)
@@ -88,10 +92,10 @@ def get_options(mode, today = Date.today)
 
         if %i(list remaining_days).include?(mode)
             parser.on('--from=DATE', String, '開始日を YYYY-MM-DD 形式で指定します.') {|date|
-                options[:from_date] = Date.strptime(date, '%Y-%m-%d')
+                options[:from_date] = parse_date(date)
             }
             parser.on('--to=DATE', String, '終了日を YYYY-MM-DD 形式で指定します.') {|date|
-                options[:to_date] = Date.strptime(date, '%Y-%m-%d')
+                options[:to_date] = parse_date(date)
             }
         end
 
@@ -99,6 +103,14 @@ def get_options(mode, today = Date.today)
     end
 
     options
+rescue OptionParser::InvalidOption => exception
+    raise ParseOptionFailed, exception
+end
+
+def parse_date(string)
+    Date.strptime(string, '%Y-%m-%d')
+rescue Date::Error
+    raise ParseDateFailed, string
 end
 
 def print_help
@@ -291,6 +303,8 @@ def load_holiday_map
         "#{DATA_DIR}/japanese-holidays.tsv",
         "#{DATA_DIR}/company-holidays.tsv",
     ])
+rescue Errno::ENOENT
+    raise LoadHolidaysFileFailed
 end
 
 def print_table(table)
