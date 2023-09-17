@@ -87,10 +87,10 @@ def get_options(mode, today = Date.today)
         end
 
         if %i(list remaining_days).include?(mode)
-            parser.on('--from=DATE', String, '出力に含める開始年月日を YYYY-MM-DD 形式で指定します.') {|date|
+            parser.on('--from=DATE', String, '開始日を YYYY-MM-DD 形式で指定します.') {|date|
                 options[:from_date] = Date.parse(date)
             }
-            parser.on('--to=DATE', String, '出力に含める終了年月日を YYYY-MM-DD 形式で指定します.') {|date|
+            parser.on('--to=DATE', String, '終了日を YYYY-MM-DD 形式で指定します.') {|date|
                 options[:to_date] = Date.parse(date)
             }
         end
@@ -157,11 +157,11 @@ def print_help
                 サブコマンド table で有効なオプションです.
 
             --from=DATE
-                出力に含める開始年月日を YYYY-MM-DD 形式で指定します.
+                開始日を YYYY-MM-DD 形式で指定します.
                 サブコマンド table, remaining-days で有効なオプションです.
 
             --to=DATE
-                出力に含める終了年月日を YYYY-MM-DD 形式で指定します.
+                終了日を YYYY-MM-DD 形式で指定します.
                 サブコマンド table, remaining-days で有効なオプションです.
     EOS
 end
