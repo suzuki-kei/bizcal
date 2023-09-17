@@ -16,16 +16,16 @@ class BusinessCalendarTestCase < Test::Unit::TestCase
     def test_holiday?
         calendar = new_business_calendar_2000
 
-        assert_equal true, calendar.holiday?(Date.new(2000, 1, 1))
-        assert_equal true, calendar.holiday?(Date.new(2000, 1, 2))
-        assert_equal true, calendar.holiday?(Date.new(2000, 1, 3))
-        assert_equal false, calendar.holiday?(Date.new(2000, 1, 4))
-        assert_equal false, calendar.holiday?(Date.new(2000, 1, 5))
-        assert_equal false, calendar.holiday?(Date.new(2000, 1, 6))
-        assert_equal false, calendar.holiday?(Date.new(2000, 1, 7))
-        assert_equal true, calendar.holiday?(Date.new(2000, 1, 8))
-        assert_equal true, calendar.holiday?(Date.new(2000, 1, 9))
-        assert_equal true, calendar.holiday?(Date.new(2000, 1, 10))
+        assert_equal true,  calendar.holiday?(Date.new(2000, 1,  1))
+        assert_equal true,  calendar.holiday?(Date.new(2000, 1,  2))
+        assert_equal true,  calendar.holiday?(Date.new(2000, 1,  3))
+        assert_equal false, calendar.holiday?(Date.new(2000, 1,  4))
+        assert_equal false, calendar.holiday?(Date.new(2000, 1,  5))
+        assert_equal false, calendar.holiday?(Date.new(2000, 1,  6))
+        assert_equal false, calendar.holiday?(Date.new(2000, 1,  7))
+        assert_equal true,  calendar.holiday?(Date.new(2000, 1,  8))
+        assert_equal true,  calendar.holiday?(Date.new(2000, 1,  9))
+        assert_equal true,  calendar.holiday?(Date.new(2000, 1, 10))
     end
 
     def new_business_calendar_2000
