@@ -56,7 +56,7 @@ def get_options(mode, today = Date.today)
         :columns   => 3,
     }
 
-    OptionParser.new.tap do |parser|
+    OptionParser.new("bizcal #{mode} [OPTION...]").tap do |parser|
         if %i(list table).include?(mode)
             parser.on('-1', '--one', '今月のカレンダーを表示します.') {
                 options[:from_date] = today.beginning_of_month
