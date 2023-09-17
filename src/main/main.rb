@@ -294,15 +294,11 @@ def print_remaining_days
 end
 
 def new_business_calendar
-    holiday_map = load_holiday_map
-    BusinessCalendar.new(holiday_map)
-end
-
-def load_holiday_map
-    HolidaysFileLoader.new.holiday_map_from_files([
+    holidays = HolidaysFileLoader.new.holidays_from_files([
         "#{DATA_DIR}/japanese-holidays.tsv",
         "#{DATA_DIR}/company-holidays.tsv",
     ])
+    BusinessCalendar.new(holidays)
 rescue Errno::ENOENT
     raise LoadHolidaysFileFailed
 end

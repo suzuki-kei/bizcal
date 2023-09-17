@@ -5,8 +5,16 @@ require 'date'
 #
 class BusinessCalendar
 
-    def initialize(holiday_map)
-        @holiday_map = holiday_map
+    def initialize(holidays)
+        @holiday_map = holidays.reduce({}) do |map, holiday|
+            map.tap do
+                if map.key?(holiday.date)
+                    map[holiday.date].descriptions.append(*holiday.descriptions)
+                else
+                    map[holiday.date] = holiday
+                end
+            end
+        end
     end
 
     def holiday?(date)
@@ -56,18 +64,6 @@ end
 # 休業日ファイルのローダー.
 #
 class HolidaysFileLoader
-
-    def holiday_map_from_files(file_paths)
-        holidays_from_files(file_paths).reduce({}) do |map, holiday|
-            if map.key?(holiday.date)
-                map[holiday.date].descriptions.append(*holiday.descriptions)
-            else
-                map[holiday.date] = holiday
-            end
-
-            map
-        end
-    end
 
     def holidays_from_files(file_paths)
         file_paths.map(&method(:holidays_from_file)).reduce([], &:+)
