@@ -3,5 +3,5 @@
 
 .PHONY: test
 test:
-	@ruby -I src/main src/test/all.rb
+	@ruby -I src/main -I src/test src/test/all.rb
 
