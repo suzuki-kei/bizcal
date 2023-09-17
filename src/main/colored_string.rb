@@ -56,7 +56,11 @@ class ColoredString
     end
 
     def to_s
-        "\033[#{@text_attribute};#{@foreground}m\033[#{@background}m#{@string}\033[0m"
+        if @string.empty?
+            ''
+        else
+            "\033[#{@text_attribute};#{@foreground};#{@background}m#{@string}\033[0m"
+        end
     end
 
 end
