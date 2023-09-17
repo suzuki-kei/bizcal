@@ -9,7 +9,7 @@ class BusinessCalendar
         @holiday_map = holidays.reduce({}) do |map, holiday|
             map.tap do
                 if map.key?(holiday.date)
-                    map[holiday.date].descriptions.append(*holiday.descriptions)
+                    map[holiday.date] = map[holiday.date].merge(holiday)
                 else
                     map[holiday.date] = holiday
                 end
@@ -50,6 +50,14 @@ class Holiday
     def initialize(date, *descriptions)
         @date = date
         @descriptions = descriptions
+    end
+
+    def merge(holiday)
+        if @date != holiday.date
+            raise ArgumentError
+        end
+
+        Holiday.new(@date, *(@descriptions + holiday.descriptions))
     end
 
     def ==(holiday)
