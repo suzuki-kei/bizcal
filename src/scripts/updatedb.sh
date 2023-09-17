@@ -35,7 +35,7 @@ function prepare_japanese_holidays_tsv_file
 {
     mkdir -p "$(dirname "${JAPANESE_HOLIAYS_TSV_FILE_PATH}")"
 
-    curl -s 'https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv' \
+    curl -sS 'https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv' \
         | iconv --from-code=Shift_JIS --to-code=UTF-8 \
         | awk -F '[/,]' '{printf "%04d-%02d-%02d\t%s\n", $1, $2, $3, $4}' \
         | tail -n +2 \
