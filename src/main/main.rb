@@ -22,9 +22,7 @@ def main
     case ARGV[0]
         when nil
             print_calendar_table
-        when /^-/
-            print_calendar_table
-        when 'help'
+        when 'help', '-h', '--help'
             ARGV.shift
             print_help
         when 'updatedb'
@@ -39,6 +37,8 @@ def main
         when 'remaining-days'
             ARGV.shift
             print_remaining_days
+        when /^-/
+            print_calendar_table
         else
             print_help
     end
@@ -58,39 +58,39 @@ def get_options(mode, today = Date.today)
 
     OptionParser.new.tap do |parser|
         if %i(list table).include?(mode)
-            parser.on('-1', '--one') {
+            parser.on('-1', '--one', '今月のカレンダーを表示します.') {
                 options[:from_date] = today.beginning_of_month
                 options[:to_date]   = today.end_of_month
             }
-            parser.on('-3', '--three') {
+            parser.on('-3', '--three', '今月を中心に 3 ヶ月分のカレンダーを表示します.') {
                 options[:from_date] = today.next_month(-1).beginning_of_month
                 options[:to_date]   = today.next_month(1).end_of_month
             }
-            parser.on('-Y', '--twelve') {
+            parser.on('-Y', '--twelve', '今月を起点に 12 ヶ月分のカレンダーを表示します.') {
                 options[:from_date] = today.beginning_of_month
                 options[:to_date]   = today.next_month(11).end_of_month
             }
-            parser.on('-y', '--year') {
+            parser.on('-y', '--year', '今年 1 年分のカレンダーを表示します.') {
                 options[:from_date] = today.beginning_of_year
                 options[:to_date]   = today.end_of_year
             }
-            parser.on('-n N', '--months=N', Integer) {|n|
+            parser.on('-n N', '--months=N', Integer, '今月を起点に N ヶ月分のカレンダーを表示します.') {|n|
                 options[:from_date] = today.beginning_of_month
                 options[:to_date]   = today.next_month(n - 1).end_of_month
             }
         end
 
         if %i(table).include?(mode)
-            parser.on('-c N', '--columns=N', Integer) {|n|
+            parser.on('-c N', '--columns=N', Integer, 'N ヶ月分のカレンダーを横に表示します.') {|n|
                 options[:columns]   = n
             }
         end
 
         if %i(list remaining_days).include?(mode)
-            parser.on('--from=DATE', String) {|date|
+            parser.on('--from=DATE', String, '出力に含める開始年月日を YYYY-MM-DD 形式で指定します.') {|date|
                 options[:from_date] = Date.parse(date)
             }
-            parser.on('--to=DATE', String) {|date|
+            parser.on('--to=DATE', String, '出力に含める終了年月日を YYYY-MM-DD 形式で指定します.') {|date|
                 options[:to_date] = Date.parse(date)
             }
         end
@@ -102,7 +102,68 @@ def get_options(mode, today = Date.today)
 end
 
 def print_help
-    puts 'Not Implemented.'
+    puts <<~'EOS'
+        NAME
+            bizcal - business calendar
+
+        SYNOPSIS
+            bizcal [SUBCOMMAND] [OPTION...]
+
+        DESCRIPTION
+            営業日/非営業日を考慮したカレンダーを表示します.
+            また, 特定日までの残り営業日を表示することもできます.
+
+        SUBCOMMAND
+            help
+                ヘルプメッセージを表示します.
+
+            updatedb
+                祝日データベースを更新します.
+
+            list
+                カレンダーをリスト表示します.
+
+            table
+                カレンダーをテーブル表示します.
+
+            remaining-days
+                今日を起点として週末, 月末, 四半期末, 年末までの残り営業日を表示します.
+                --from=DATE で起点となる日を変更できます.
+                --to=DATE で終点となる日を指定すると, その日までの残り営業日を表示します.
+
+        OPTIONS
+            -1, --one
+                今月のカレンダーを表示します.
+                サブコマンド list, table で有効なオプションです.
+
+            -3, --three
+                今月を中心に 3 ヶ月分のカレンダーを表示します.
+                サブコマンド list, table で有効なオプションです.
+
+            -Y, --twelve
+                今月を起点に 12 ヶ月分のカレンダーを表示します.
+                サブコマンド list, table で有効なオプションです.
+
+            -y, --year
+                今年 1 年分のカレンダーを表示します.
+                サブコマンド list, table で有効なオプションです.
+
+            -n N, --months=N
+                今月を起点に N ヶ月分のカレンダーを表示します.
+                サブコマンド list, table で有効なオプションです.
+
+            -c N, --columns=N
+                N ヶ月分のカレンダーを横に表示します.
+                サブコマンド table で有効なオプションです.
+
+            --from=DATE
+                出力に含める開始年月日を YYYY-MM-DD 形式で指定します.
+                サブコマンド table, remaining-days で有効なオプションです.
+
+            --to=DATE
+                出力に含める終了年月日を YYYY-MM-DD 形式で指定します.
+                サブコマンド table, remaining-days で有効なオプションです.
+    EOS
 end
 
 def update_holidays_database
