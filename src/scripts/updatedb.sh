@@ -7,7 +7,7 @@ declare -r DATA_DIR="${ROOT_DIR}/data"
 declare -r COMPANY_HOLIAYS_TSV_FILE_PATH="${DATA_DIR}/company-holidays.tsv"
 declare -r JAPANESE_HOLIAYS_TSV_FILE_PATH="${DATA_DIR}/japanese-holidays.tsv"
 
-function setup
+function main
 {
     prepare_company_holidays_tsv_file
     prepare_japanese_holidays_tsv_file
@@ -42,5 +42,5 @@ function prepare_japanese_holidays_tsv_file
         > "${JAPANESE_HOLIAYS_TSV_FILE_PATH}"
 }
 
-setup
+main
 

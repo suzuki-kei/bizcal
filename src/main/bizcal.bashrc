@@ -9,7 +9,7 @@ function bizcal
             echo 'Not Implemented.'
             ;;
         updatedb)
-            bash "${ROOT_DIR}/src/scripts/setup.sh"
+            bash "${ROOT_DIR}/src/scripts/updatedb.sh"
             ;;
         list | table | remaining-days)
             ruby -I "${ROOT_DIR}/src/main" -r main -e main -- "$@"
