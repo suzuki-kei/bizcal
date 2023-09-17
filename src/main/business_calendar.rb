@@ -44,6 +44,12 @@ class Holiday
         @descriptions = descriptions
     end
 
+    def ==(holiday)
+        self.class == holiday.class &&
+            @date == holiday.date &&
+            @descriptions == holiday.descriptions
+    end
+
 end
 
 #

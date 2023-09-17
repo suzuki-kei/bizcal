@@ -1,5 +1,15 @@
 require 'test/unit'
 require 'business_calendar'
+require 'business_calendar_2000'
+
+class HolidayTestCase < Test::Unit::TestCase
+
+    def test_equals
+        assert_true Holiday.new(Date.new(2000, 1, 1)) == Holiday.new(Date.new(2000, 1, 1))
+        assert_false Holiday.new(Date.new(2000, 1, 1)) == Holiday.new(Date.new(2000, 1, 2))
+    end
+
+end
 
 class BusinessCalendarTestCase < Test::Unit::TestCase
 
