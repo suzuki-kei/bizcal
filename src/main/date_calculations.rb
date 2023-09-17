@@ -4,11 +4,11 @@ require 'time'
 module DateCalculations
 
     def beginning_of_day
-        Time.new(year, month, date)
+        Time.new(year, month, day)
     end
 
     def end_of_day
-        Time.new(year, month, date + 1) - 1
+        Time.new(year, month, day + 1) - 1
     end
 
     def beginning_of_week(base_wday=0)
@@ -19,7 +19,7 @@ module DateCalculations
 
     def end_of_week(base_wday=0)
         # 0=日曜日, 6=土曜日
-        duration_days = (7 - wday - base_wday) % 7
+        duration_days = (base_wday - 1 - wday) % 7
         self + duration_days
     end
 
@@ -58,8 +58,10 @@ module DateCalculations
 end
 
 class Date
-
     include DateCalculations
+end
 
+class Time
+    include DateCalculations
 end
 
