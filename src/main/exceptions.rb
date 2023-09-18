@@ -51,3 +51,22 @@ class ParseDateFailed < BizCalError
 
 end
 
+#
+# 日付が有効範囲外であることを表す例外.
+#
+class DateOutOfRangeError < BizCalError
+
+    def initialize(range)
+        super(<<~"EOS")
+            Date out of range.
+
+            Specify the date in [#{range.min}, #{range.max}].
+
+            Run the following command. You may be able to recover from the error.
+
+                bizcal updatedb
+        EOS
+    end
+
+end
+

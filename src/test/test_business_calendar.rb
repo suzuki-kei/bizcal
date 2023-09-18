@@ -36,6 +36,29 @@ end
 
 class BusinessCalendarTestCase < Test::Unit::TestCase
 
+    def test_range
+        calendar = BusinessCalendar.new([
+            Holiday.new(Date.new(2000, 1, 1)),
+        ])
+        assert_equal Date.new(2000, 1, 1) .. Date.new(2000, 1, 31), calendar.range
+
+        calendar = BusinessCalendar.new([
+            Holiday.new(Date.new(2000, 1, 2)),
+        ])
+        assert_equal Date.new(2000, 1, 1) .. Date.new(2000, 1, 31), calendar.range
+
+        calendar = BusinessCalendar.new([
+            Holiday.new(Date.new(2000, 1, 31)),
+        ])
+        assert_equal Date.new(2000, 1, 1) .. Date.new(2000, 1, 31), calendar.range
+
+        calendar = BusinessCalendar.new([
+            Holiday.new(Date.new(2000, 1, 1)),
+            Holiday.new(Date.new(2000, 2, 1)),
+        ])
+        assert_equal Date.new(2000, 1, 1) .. Date.new(2000, 2, 29), calendar.range
+    end
+
     def test_holiday?
         calendar = new_business_calendar_2000
 

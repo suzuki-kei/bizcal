@@ -17,6 +17,11 @@ class BusinessCalendar
         end
     end
 
+    def range
+        dates = @holiday_map.keys
+        dates.min.beginning_of_month .. dates.max.end_of_month
+    end
+
     def holiday?(date)
         lookup_holiday(date) != nil
     end
