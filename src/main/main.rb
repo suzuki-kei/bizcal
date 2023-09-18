@@ -270,21 +270,19 @@ end
 def print_remaining_days
     options   = get_options(:remaining_days)
     today     = options[:today]
-    from_date = options[:from_date]
+    from_date = options[:from_date] || today
     to_date   = options[:to_date]
     calendar  = new_business_calendar
 
     if to_date
-        base = from_date || today
-        remaining_days = base.remaining_days(to_date, calendar)
+        remaining_days = from_date.remaining_days(to_date, calendar)
         puts "#{remaining_days}d"
     else
-        base = from_date || today
         remaining_days_list = [
-            base.remaining_days(base.end_of_week, calendar),
-            base.remaining_days(base.end_of_month, calendar),
-            base.remaining_days(base.end_of_quater, calendar),
-            base.remaining_days(base.end_of_year, calendar),
+            from_date.remaining_days(from_date.end_of_week, calendar),
+            from_date.remaining_days(from_date.end_of_month, calendar),
+            from_date.remaining_days(from_date.end_of_quater, calendar),
+            from_date.remaining_days(from_date.end_of_year, calendar),
         ]
         print_table([
             'week month quater year'.split(' '),
