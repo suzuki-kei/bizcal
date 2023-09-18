@@ -15,6 +15,10 @@
 
     source '/<PATH-TO-REPOSITORY>/bizcal/src/bashrc/bizcal.bashrc'
 
+祝日/休日データベースを更新します.
+
+    bizcal updatedb
+
 ## 使い方
 
     bizcal help
