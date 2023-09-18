@@ -189,10 +189,6 @@ def print_calendar_list
     to_date   = options[:to_date] || today.end_of_month
     calendar  = new_business_calendar
 
-    if !calendar.range.cover?(from_date..to_date)
-        raise DateOutOfRangeError.new(calendar.range)
-    end
-
     from_date.upto(to_date).each do |date|
         if holiday = calendar.lookup_holiday(date)
             puts ColoredString.new(
@@ -215,10 +211,6 @@ def print_calendar_table
     to_date   = options[:to_date] || today.end_of_month
     columns   = options[:columns]
     calendar  = new_business_calendar
-
-    if !calendar.range.cover?(from_date..to_date)
-        raise DateOutOfRangeError.new(calendar.range)
-    end
 
     from_year_month       = from_date.beginning_of_month
     to_year_month         = to_date.beginning_of_month
@@ -281,10 +273,6 @@ def print_remaining_days
     from_date = options[:from_date]
     to_date   = options[:to_date]
     calendar  = new_business_calendar
-
-    if !calendar.range.cover?(from_date..to_date)
-        raise DateOutOfRangeError.new(calendar.range)
-    end
 
     if to_date
         base = from_date || today

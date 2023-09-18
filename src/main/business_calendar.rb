@@ -1,4 +1,5 @@
 require 'date'
+require 'exceptions'
 
 #
 # ビジネスカレンダー.
@@ -27,6 +28,10 @@ class BusinessCalendar
     end
 
     def lookup_holiday(date)
+        if !range.cover?(date)
+            raise DateOutOfRangeError.new(range)
+        end
+
         case
             when @holiday_map.key?(date)
                 @holiday_map[date]
