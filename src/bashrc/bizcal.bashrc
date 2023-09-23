@@ -1,9 +1,8 @@
 #!/bin/bash
 
-declare -r ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE}")/../.." && pwd)"
-
 function bizcal
 {
+    declare -r ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE}")/../.." && pwd)"
     ruby -I "${ROOT_DIR}/src/main" -r main -e main -- "$@"
 }
 
