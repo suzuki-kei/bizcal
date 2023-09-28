@@ -2,8 +2,8 @@
 
 function bizcal
 {
-    declare -r ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE}")/../.." && pwd)"
-    ruby -I "${ROOT_DIR}/src/main" -r main -e main -- "$@"
+    declare -r root_dir="$(cd "$(dirname "${BASH_SOURCE}")/../.." && pwd)"
+    ruby -I "${root_dir}/src/main" -r main -e main -- "$@"
 }
 
 function _bizcal.bash_complete
