@@ -175,6 +175,10 @@ def print_help
             --to=DATE
                 終了日を YYYY-MM-DD 形式で指定します.
                 サブコマンド table, remaining-days で有効なオプションです.
+
+        EXIT STATUS
+            処理に成功した場合は 0.
+            処理に失敗した場合は 0 以外.
     EOS
 end
 
