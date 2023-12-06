@@ -2,8 +2,8 @@ require 'business_calendar'
 require 'colored_string'
 require 'date'
 require 'date_calculations'
-require 'optparse'
 require 'exceptions'
+require 'optparse'
 
 ROOT_DIR = File.expand_path("#{__dir__}/../..")
 DATA_DIR = "#{ROOT_DIR}/data"
