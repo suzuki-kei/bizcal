@@ -3,7 +3,7 @@
 function bizcal
 {
     declare root_dir
-    root_dir="$(cd -- "$(dirname -- "${BASH_SOURCE}")/../.." && pwd)"
+    root_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 
     ruby -I "${root_dir}/src/main" -r main -e main -- "$@"
 }
