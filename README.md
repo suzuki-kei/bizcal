@@ -11,12 +11,8 @@
 
 ## インストール
 
-.bashrc に以下を追加します.
-
-    source '/<PATH-TO-REPOSITORY>/bizcal/src/bashrc/bizcal.bashrc'
-
-祝日/休日データベースを更新します.
-
+    make install
+    source ~/.bashrc
     bizcal updatedb
 
 ## 使い方
