@@ -12,13 +12,9 @@ function _bizcal.bash_complete
 {
     declare -r word="${COMP_WORDS[${COMP_CWORD}]}"
 
-    case "${COMP_WORDS[1]}" in
-        help | updatedb | list | table | remaining-days)
-            ;;
-        *)
-            COMPREPLY=($(compgen -W 'help updatedb list table remaining-days' -- "${word}"))
-            ;;
-    esac
+    if [[ ${COMP_CWORD} == 1 ]]; then
+        COMPREPLY=($(compgen -W 'help updatedb list table remaining-days' -- "${word}"))
+    fi
 }
 
 complete -F _bizcal.bash_complete bizcal
