@@ -1,9 +1,8 @@
 require 'business_calendar'
 require 'colored_string'
-require 'date'
+require 'command_line_options'
 require 'date_calculations'
 require 'exceptions'
-require 'optparse'
 
 ROOT_DIR = File.expand_path("#{__dir__}/../..")
 DATA_DIR = "#{ROOT_DIR}/data"
@@ -46,71 +45,6 @@ def main
 rescue BizCalError => exception
     $stderr.puts "[ERROR] #{exception}"
     exit 1
-end
-
-def get_options(mode, today = Date.today)
-    if ! %i(list table remaining_days).include?(mode)
-        raise ArgumentError, "Invalid mode: [#{mode}]"
-    end
-
-    options = {
-        :today     => today,
-        :from_date => nil,
-        :to_date   => nil,
-        :columns   => 3,
-    }
-
-    OptionParser.new("bizcal #{mode} [OPTION...]").tap do |parser|
-        if %i(list table).include?(mode)
-            parser.on('-1', '--one', '今月のカレンダーを表示します.') {
-                options[:from_date] = today.beginning_of_month
-                options[:to_date]   = today.end_of_month
-            }
-            parser.on('-3', '--three', '今月を中心に 3 ヶ月分のカレンダーを表示します.') {
-                options[:from_date] = today.next_month(-1).beginning_of_month
-                options[:to_date]   = today.next_month(1).end_of_month
-            }
-            parser.on('-Y', '--twelve', '今月を起点に 12 ヶ月分のカレンダーを表示します.') {
-                options[:from_date] = today.beginning_of_month
-                options[:to_date]   = today.next_month(11).end_of_month
-            }
-            parser.on('-y', '--year', '今年 1 年分のカレンダーを表示します.') {
-                options[:from_date] = today.beginning_of_year
-                options[:to_date]   = today.end_of_year
-            }
-            parser.on('-n N', '--months=N', Integer, '今月を起点に N ヶ月分のカレンダーを表示します.') {|n|
-                options[:from_date] = today.beginning_of_month
-                options[:to_date]   = today.next_month(n - 1).end_of_month
-            }
-        end
-
-        if %i(table).include?(mode)
-            parser.on('-c N', '--columns=N', Integer, 'N ヶ月分のカレンダーを横に表示します.') {|n|
-                options[:columns]   = n
-            }
-        end
-
-        if %i(list remaining_days).include?(mode)
-            parser.on('--from=DATE', String, '開始日を YYYY-MM-DD 形式で指定します.') {|date|
-                options[:from_date] = parse_date(date)
-            }
-            parser.on('--to=DATE', String, '終了日を YYYY-MM-DD 形式で指定します.') {|date|
-                options[:to_date] = parse_date(date)
-            }
-        end
-
-        parser.parse!(ARGV)
-    end
-
-    options
-rescue OptionParser::InvalidOption => exception
-    raise ParseOptionFailed, exception
-end
-
-def parse_date(string)
-    Date.strptime(string, '%Y-%m-%d')
-rescue Date::Error
-    raise ParseDateFailed, string
 end
 
 def print_help
@@ -190,7 +124,7 @@ def update_holidays_database
 end
 
 def print_calendar_list
-    options   = get_options(:list)
+    options   = CommandLineOptions.new.parse!(:list)
     today     = options[:today]
     from_date = options[:from_date] || today.beginning_of_month
     to_date   = options[:to_date] || today.end_of_month
@@ -210,7 +144,7 @@ def print_calendar_list
 end
 
 def print_calendar_table
-    options   = get_options(:table)
+    options   = CommandLineOptions.new.parse!(:list)
     today     = options[:today]
     from_date = options[:from_date] || today.beginning_of_month
     to_date   = options[:to_date] || today.end_of_month
@@ -272,7 +206,7 @@ def build_year_month_table_lines(calendar, year_month, today)
 end
 
 def print_remaining_days
-    options   = get_options(:remaining_days)
+    options   = CommandLineOptions.new.parse!(:list)
     today     = options[:today]
     from_date = options[:from_date] || today
     to_date   = options[:to_date]
