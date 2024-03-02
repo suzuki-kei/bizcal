@@ -200,13 +200,11 @@ def print_calendar_list
         if holiday = calendar.lookup_holiday(date)
             puts ColoredString.new(
                 "#{date.strftime('%F (%a)')} #{holiday.descriptions.join(', ')}".strip,
-                :text_attribute => date == today ? :invert : :normal,
-                :foreground     => :red)
+                **make_colored_string_options(date, today, calendar))
         else
             puts ColoredString.new(
                 date.strftime('%F (%a)'),
-                :text_attribute => date == today ? :invert : :normal,
-                :foreground     => :default)
+                **make_colored_string_options(date, today, calendar))
         end
     end
 end
@@ -262,8 +260,7 @@ def build_year_month_table_lines(calendar, year_month, today)
             if date.month == year_month.month
                 ColoredString.new(
                     sprintf('%2s', date.day),
-                    :text_attribute => date == today ? :invert : :normal,
-                    :foreground     => calendar.holiday?(date) ? :red : :default)
+                    **make_colored_string_options(date, today, calendar))
             else
                 '  '
             end
@@ -317,5 +314,33 @@ def print_table(table)
         format = column_sizes.map{|size| "%#{size}s"}.join(' ') + "\n"
         printf(format, *row)
     end
+end
+
+def make_colored_string_options(date, today, calendar)
+    text_attribute = case
+        when date == today
+            :invert
+        else
+            :normal
+    end
+
+    holiday = calendar.lookup_holiday(date)
+
+    foreground = case
+        when holiday.nil?
+            :default
+        when date.saturday? && holiday.descriptions.empty?
+            :blue
+        when date.sunday? && holiday.descriptions.empty?
+            :red
+        else
+            :red
+    end
+
+    {
+        :text_attribute => text_attribute,
+        :foreground => foreground,
+        :background => :default,
+    }
 end
 
