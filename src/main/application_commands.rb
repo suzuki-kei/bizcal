@@ -94,7 +94,7 @@ module ApplicationCommands
                 from_date.remaining_days(from_date.end_of_year, calendar),
             ]
             print_table([
-                'week month quater year'.split(' '),
+                %w(week month quater year),
                 remaining_days_list.map{|days| "#{days}d"},
             ])
         end
