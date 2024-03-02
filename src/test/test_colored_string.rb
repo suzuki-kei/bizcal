@@ -1,5 +1,5 @@
-require 'test/unit'
 require 'colored_string'
+require 'test/unit'
 
 class ColoredStringTestCase < Test::Unit::TestCase
 

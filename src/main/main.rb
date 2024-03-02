@@ -1,8 +1,9 @@
-require 'business_calendar'
+require 'calendar'
 require 'colored_string'
 require 'command_line_options'
 require 'date_calculations'
 require 'exceptions'
+require 'holiday_file_loader'
 
 ROOT_DIR = File.expand_path("#{__dir__}/../..")
 DATA_DIR = "#{ROOT_DIR}/data"
@@ -27,7 +28,7 @@ def main
             print_help
         when 'updatedb'
             ARGV.shift
-            update_holidays_database
+            update_holiday_database
         when 'list'
             ARGV.shift
             print_calendar_list
@@ -119,7 +120,7 @@ def print_help
     EOS
 end
 
-def update_holidays_database
+def update_holiday_database
     system('bash', "#{SCRIPTS_DIR}/updatedb.sh", exception: true)
 end
 
@@ -128,7 +129,7 @@ def print_calendar_list
     today     = options[:today]
     from_date = options[:from_date] || today.beginning_of_month
     to_date   = options[:to_date] || today.end_of_month
-    calendar  = new_business_calendar
+    calendar  = new_calendar
 
     from_date.upto(to_date).each do |date|
         if holiday = calendar.lookup_holiday(date)
@@ -149,7 +150,7 @@ def print_calendar_table
     from_date = options[:from_date] || today.beginning_of_month
     to_date   = options[:to_date] || today.end_of_month
     columns   = options[:columns]
-    calendar  = new_business_calendar
+    calendar  = new_calendar
 
     from_year_month       = from_date.beginning_of_month
     to_year_month         = to_date.beginning_of_month
@@ -210,7 +211,7 @@ def print_remaining_days
     today     = options[:today]
     from_date = options[:from_date] || today
     to_date   = options[:to_date]
-    calendar  = new_business_calendar
+    calendar  = new_calendar
 
     if to_date
         remaining_days = from_date.remaining_days(to_date, calendar)
@@ -229,14 +230,14 @@ def print_remaining_days
     end
 end
 
-def new_business_calendar
-    holidays = HolidaysFileLoader.new.holidays_from_files([
+def new_calendar
+    holidays = HolidayFileLoader.new.load(
         "#{DATA_DIR}/japanese-holidays.tsv",
         "#{DATA_DIR}/company-holidays.tsv",
-    ])
-    BusinessCalendar.new(holidays)
+    )
+    Calendar.new(holidays)
 rescue Errno::ENOENT
-    raise LoadHolidaysFileFailed
+    raise LoadHolidayFileFailed
 end
 
 def print_table(table)

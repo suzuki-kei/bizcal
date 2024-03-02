@@ -1,7 +1,7 @@
-require 'test/unit'
+require 'calendar'
+require 'calendar_2000'
 require 'date_calculations'
-require 'business_calendar'
-require 'business_calendar_2000'
+require 'test/unit'
 
 class DateCalculationsTestCase < Test::Unit::TestCase
 
@@ -132,7 +132,7 @@ class DateCalculationsTestCase < Test::Unit::TestCase
 
     def test_remaining_days
         to_date = Date.new(2000, 12, 31)
-        calendar = new_business_calendar_2000
+        calendar = new_calendar_2000
 
         assert_equal 42, Date.new(2000, 10, 30).remaining_days(to_date, calendar)
         assert_equal 38, Date.new(2000, 11,  6).remaining_days(to_date, calendar)

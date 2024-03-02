@@ -1,8 +1,8 @@
+require 'calendar'
 require 'date'
-require 'business_calendar'
 
-def new_business_calendar_2000
-    BusinessCalendar.new([
+def new_calendar_2000
+    Calendar.new([
         Holiday.new(Date.new(2000,  1,  1), '元日'),
         Holiday.new(Date.new(2000,  1,  2), '会社休業日'),
         Holiday.new(Date.new(2000,  1,  3), '会社休業日'),

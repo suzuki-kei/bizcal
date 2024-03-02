@@ -11,7 +11,7 @@ end
 #
 # 祝日/休日ファイルの読み込みに失敗したことを表す例外.
 #
-class LoadHolidaysFileFailed < BizCalError
+class LoadHolidayFileFailed < BizCalError
 
     def initialize
         super(<<~'EOS')
