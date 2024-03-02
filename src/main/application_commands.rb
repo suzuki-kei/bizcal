@@ -4,16 +4,18 @@ require 'command_line_options'
 require 'date_calculations'
 require 'exceptions'
 require 'holiday_file_loader'
+require 'pathname'
 
 module ApplicationCommands
 
     def print_help
-        usage_file_path = File.absolute_path(File.join(File.dirname(__FILE__), 'usage.txt'))
-        puts File.read(usage_file_path).strip
+        file_path = ROOT_DIR.join('src', 'main', 'usage.txt')
+        puts File.read(file_path).strip
     end
 
     def update_holiday_database
-        system('bash', "#{SCRIPTS_DIR}/updatedb.sh", exception: true)
+        file_path = SCRIPTS_DIR.join('updatedb.sh')
+        system('bash', file_path, exception: true)
     end
 
     def print_calendar_list
@@ -99,9 +101,9 @@ module ApplicationCommands
 
     private
 
-    ROOT_DIR = File.expand_path("#{__dir__}/../..")
-    DATA_DIR = "#{ROOT_DIR}/data"
-    SCRIPTS_DIR = "#{ROOT_DIR}/src/scripts"
+    ROOT_DIR = Pathname.new(File.expand_path(File.join(__dir__, '..', '..')))
+    DATA_DIR = ROOT_DIR.join('data')
+    SCRIPTS_DIR = ROOT_DIR.join('src', 'scripts')
 
     WDAY_TO_NAME_MAP = {
         0 => 'Su',
@@ -115,8 +117,8 @@ module ApplicationCommands
 
     def new_calendar
         holidays = HolidayFileLoader.new.load(
-            "#{DATA_DIR}/japanese-holidays.tsv",
-            "#{DATA_DIR}/company-holidays.tsv",
+            DATA_DIR.join('japanese-holidays.tsv'),
+            DATA_DIR.join('company-holidays.tsv'),
         )
         Calendar.new(holidays)
     rescue Errno::ENOENT
