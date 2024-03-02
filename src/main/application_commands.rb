@@ -52,7 +52,8 @@ module ApplicationCommands
         year_month_lines_list = []
 
         while year_month <= to_year_month
-            year_month_lines_list.append(build_year_month_table_lines(calendar, year_month, today))
+            lines = build_year_month_table_lines(calendar, year_month, today)
+            year_month_lines_list.append(lines)
             year_month = year_month.next_month(1)
         end
 
