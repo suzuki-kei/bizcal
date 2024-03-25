@@ -5,6 +5,7 @@ require 'date_calculations'
 require 'exceptions'
 require 'holiday_file_loader'
 require 'pathname'
+require 'string_formatter'
 
 module ApplicationCommands
 
@@ -20,19 +21,22 @@ module ApplicationCommands
 
     def print_calendar_list
         options   = CommandLineOptions.new.parse!(:list)
+        locale    = options[:locale]
         today     = options[:today]
         from_date = options[:from_date] || today.beginning_of_month
         to_date   = options[:to_date] || today.end_of_month
         calendar  = new_calendar
 
+        formatter = StringFormatter.new(LOCALE_TO_WDAY_TO_NAME_MAP[locale])
+
         from_date.upto(to_date).each do |date|
             if holiday = calendar.lookup_holiday(date)
                 puts ColoredString.new(
-                    "#{date.strftime('%F (%a)')} #{holiday.descriptions.join(', ')}".strip,
+                    "#{formatter.strftime(date, format: :date_with_wday)} #{holiday.descriptions.join(', ')}".strip,
                     **make_colored_string_options(date, today, calendar))
             else
                 puts ColoredString.new(
-                    date.strftime('%F (%a)'),
+                    formatter.strftime(date, format: :date_with_wday),
                     **make_colored_string_options(date, today, calendar))
             end
         end
@@ -40,27 +44,29 @@ module ApplicationCommands
 
     def print_calendar_table
         options   = CommandLineOptions.new.parse!(:table)
+        locale    = options[:locale]
         today     = options[:today]
         from_date = options[:from_date] || today.beginning_of_month
         to_date   = options[:to_date] || today.end_of_month
         columns   = options[:columns]
         calendar  = new_calendar
 
+        formatter = StringFormatter.new(LOCALE_TO_WDAY_TO_NAME_MAP[locale])
         from_year_month       = from_date.beginning_of_month
         to_year_month         = to_date.beginning_of_month
         year_month            = from_year_month
         year_month_lines_list = []
 
         while year_month <= to_year_month
-            lines = build_year_month_table_lines(calendar, year_month, today)
+            lines = build_year_month_table_lines(locale, calendar, year_month, today)
             year_month_lines_list.append(lines)
             year_month = year_month.next_month(1)
         end
 
         year_month_lines_list.each_slice(columns) do |lines_list|
             max_lines = lines_list.map(&:size).max
-            header_line = WDAY_TO_NAME_MAP.values.join(' ')
-            padding_line = ' ' * header_line.size
+            header_line = LOCALE_TO_WDAY_TO_NAME_MAP[locale].values.join(' ')
+            padding_line = ' ' * formatter.display_width(header_line)
 
             lines_list.each do |lines|
                 (max_lines - lines.size).times do
@@ -78,10 +84,17 @@ module ApplicationCommands
 
     def print_remaining_days
         options   = CommandLineOptions.new.parse!(:remaining_days)
+        locale    = options[:locale]
         today     = options[:today]
         from_date = options[:from_date] || today
         to_date   = options[:to_date]
         calendar  = new_calendar
+
+        formatter = StringFormatter.new(LOCALE_TO_WDAY_TO_NAME_MAP[locale])
+        headers = {
+            en: %w(week month quater year),
+            ja: %w(今週 今月 今四半期 今年),
+        }[locale]
 
         if to_date
             remaining_days = from_date.remaining_days(to_date, calendar)
@@ -93,8 +106,8 @@ module ApplicationCommands
                 from_date.remaining_days(from_date.end_of_quater, calendar),
                 from_date.remaining_days(from_date.end_of_year, calendar),
             ]
-            print_table([
-                %w(week month quater year),
+            puts formatter.format_table([
+                headers,
                 remaining_days_list.map{|days| "#{days}d"},
             ])
         end
@@ -106,14 +119,25 @@ module ApplicationCommands
     DATA_DIR = ROOT_DIR.join('data')
     SCRIPTS_DIR = ROOT_DIR.join('src', 'scripts')
 
-    WDAY_TO_NAME_MAP = {
-        0 => 'Su',
-        1 => 'Mo',
-        2 => 'Tu',
-        3 => 'We',
-        4 => 'Th',
-        5 => 'Fr',
-        6 => 'Sa',
+    LOCALE_TO_WDAY_TO_NAME_MAP = {
+        en: {
+            0 => 'Su',
+            1 => 'Mo',
+            2 => 'Tu',
+            3 => 'We',
+            4 => 'Th',
+            5 => 'Fr',
+            6 => 'Sa',
+        },
+        ja: {
+            0 => '日',
+            1 => '月',
+            2 => '火',
+            3 => '水',
+            4 => '木',
+            5 => '金',
+            6 => '土',
+        },
     }
 
     def new_calendar
@@ -154,11 +178,14 @@ module ApplicationCommands
         }
     end
 
-    def build_year_month_table_lines(calendar, year_month, today)
+    def build_year_month_table_lines(locale, calendar, year_month, today)
         lines = []
 
-        header = WDAY_TO_NAME_MAP.values.join(' ')
-        lines.append(year_month.strftime('%Y-%m').center(header.size))
+        wday_to_name_map = LOCALE_TO_WDAY_TO_NAME_MAP[locale]
+        formatter = StringFormatter.new(wday_to_name_map)
+
+        header = wday_to_name_map.values.join(' ')
+        lines.append(formatter.strftime(year_month, format: :year_month).center(formatter.display_width(header)))
         lines.append(header)
 
         date = year_month.beginning_of_month.beginning_of_week(0)
@@ -177,17 +204,6 @@ module ApplicationCommands
         end
 
         lines
-    end
-
-    def print_table(table)
-        column_sizes = (0...table.first.size).map do |column_index|
-            table.map{|row| row[column_index].size}.max
-        end
-
-        table.each do |row|
-            format = column_sizes.map{|size| "%#{size}s"}.join(' ') + "\n"
-            printf(format, *row)
-        end
     end
 
 end

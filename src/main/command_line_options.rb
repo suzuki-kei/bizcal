@@ -19,6 +19,7 @@ class CommandLineOptions
         end
 
         options = {
+            :locale    => :en,
             :today     => today,
             :from_date => nil,
             :to_date   => nil,
@@ -26,6 +27,15 @@ class CommandLineOptions
         }
 
         parser = OptionParser.new("bizcal #{mode} [OPTION...]").tap do |parser|
+            if %i(list table remaining_days).include?(mode)
+                parser.on('--en', 'ロケール依存の文字列を英語で表示します') {
+                    options[:locale] = :en
+                }
+                parser.on('--ja', 'ロケール依存の文字列を日本語で表示します') {
+                    options[:locale] = :ja
+                }
+            end
+
             if %i(list table).include?(mode)
                 parser.on('-1', '--one', '今月のカレンダーを表示します.') {
                     options[:from_date] = today.beginning_of_month

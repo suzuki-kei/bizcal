@@ -30,6 +30,14 @@ SUBCOMMANDS
         --to=DATE で終点となる日を指定すると, その日までの残り営業日を表示します.
 
 OPTIONS
+    --en
+        ロケール依存の文字列を英語で表示します.
+        サブコマンド list, table, remaining-days で有効なオプションです.
+
+    --ja
+        ロケール依存の文字列を日本語で表示します.
+        サブコマンド list, table, remaining-days で有効なオプションです.
+
     -1, --one
         今月のカレンダーを表示します.
         サブコマンド list, table で有効なオプションです.
