@@ -39,7 +39,7 @@ module ApplicationCommands
     end
 
     def print_calendar_table
-        options   = CommandLineOptions.new.parse!(:list)
+        options   = CommandLineOptions.new.parse!(:table)
         today     = options[:today]
         from_date = options[:from_date] || today.beginning_of_month
         to_date   = options[:to_date] || today.end_of_month
@@ -77,7 +77,7 @@ module ApplicationCommands
     end
 
     def print_remaining_days
-        options   = CommandLineOptions.new.parse!(:list)
+        options   = CommandLineOptions.new.parse!(:remaining_days)
         today     = options[:today]
         from_date = options[:from_date] || today
         to_date   = options[:to_date]
