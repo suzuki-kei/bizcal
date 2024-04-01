@@ -15,7 +15,7 @@ module ApplicationCommands
     end
 
     def update_holiday_database
-        file_path = SCRIPTS_DIR.join('updatedb.sh')
+        file_path = SCRIPTS_DIR.join('updatedb.sh').to_s
         system('bash', file_path, exception: true)
     end
 
