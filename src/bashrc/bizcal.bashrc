@@ -1,12 +1,6 @@
 #!/bin/bash
 
-function bizcal
-{
-    declare root_dir
-    root_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
-
-    ruby -I "${root_dir}/src/main" -r main -e main -- "$@"
-}
+export PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)/bin:$PATH"
 
 function _bizcal.bash_complete
 {

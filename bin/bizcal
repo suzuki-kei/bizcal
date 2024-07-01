@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -eu -o posix -o pipefail
+
+declare ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+declare -gr ROOT_DIR
+
+ruby -I "${ROOT_DIR}/src/main" -r main -e main -- "$@"
+
