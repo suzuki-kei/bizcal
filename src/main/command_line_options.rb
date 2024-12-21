@@ -20,6 +20,7 @@ class CommandLineOptions
 
         options = {
             :locale    => :en,
+            :color     => true,
             :today     => today,
             :from_date => nil,
             :to_date   => nil,
@@ -33,6 +34,9 @@ class CommandLineOptions
                 }
                 parser.on('--ja', 'ロケール依存の文字列を日本語で表示します') {
                     options[:locale] = :ja
+                }
+                parser.on('--no-color', '色付けせずに出力します') {
+                    options[:color] = false
                 }
             end
 

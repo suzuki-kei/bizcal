@@ -31,13 +31,11 @@ module ApplicationCommands
 
         from_date.upto(to_date).each do |date|
             if holiday = calendar.lookup_holiday(date)
-                puts ColoredString.new(
-                    "#{formatter.strftime(date, format: :date_with_wday)} #{holiday.descriptions.join(', ')}".strip,
-                    **make_colored_string_options(date, today, calendar))
+                text = "#{formatter.strftime(date, format: :date_with_wday)} #{holiday.descriptions.join(', ')}".strip
+                puts make_colored_string(text, date, today, calendar, options)
             else
-                puts ColoredString.new(
-                    formatter.strftime(date, format: :date_with_wday),
-                    **make_colored_string_options(date, today, calendar))
+                text = formatter.strftime(date, format: :date_with_wday)
+                puts make_colored_string(text, date, today, calendar, options)
             end
         end
     end
@@ -58,7 +56,7 @@ module ApplicationCommands
         year_month_lines_list = []
 
         while year_month <= to_year_month
-            lines = build_year_month_table_lines(locale, calendar, year_month, today)
+            lines = build_year_month_table_lines(locale, calendar, year_month, today, options)
             year_month_lines_list.append(lines)
             year_month = year_month.next_month(1)
         end
@@ -150,6 +148,14 @@ module ApplicationCommands
         raise LoadHolidayFileFailed
     end
 
+    def make_colored_string(string, date, today, calendar, options)
+        if options[:color]
+            ColoredString.new(string, **make_colored_string_options(date, today, calendar))
+        else
+            string
+        end
+    end
+
     def make_colored_string_options(date, today, calendar)
         text_attribute = case
             when date == today
@@ -178,7 +184,7 @@ module ApplicationCommands
         }
     end
 
-    def build_year_month_table_lines(locale, calendar, year_month, today)
+    def build_year_month_table_lines(locale, calendar, year_month, today, options)
         lines = []
 
         wday_to_name_map = LOCALE_TO_WDAY_TO_NAME_MAP[locale]
@@ -193,9 +199,8 @@ module ApplicationCommands
             dates = (0..6).map{|offset| date + offset}
             lines.append(dates.map{|date|
                 if date.month == year_month.month
-                    ColoredString.new(
-                        sprintf('%2s', date.day),
-                        **make_colored_string_options(date, today, calendar))
+                    text = sprintf('%2s', date.day)
+                    make_colored_string(text, date, today, calendar, options)
                 else
                     '  '
                 end
