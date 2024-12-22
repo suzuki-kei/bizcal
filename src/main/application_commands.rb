@@ -88,25 +88,38 @@ module ApplicationCommands
         to_date   = options[:to_date]
         calendar  = new_calendar
 
-        formatter = StringFormatter.new(LOCALE_TO_WDAY_TO_NAME_MAP[locale])
-        headers = {
-            en: %w(week month quater year),
-            ja: %w(今週 今月 今四半期 今年),
-        }[locale]
-
         if to_date
             remaining_days = from_date.remaining_days(to_date, calendar)
             puts "#{remaining_days}d"
         else
+            titles = {
+                en: %w(week month quater year),
+                ja: %w(今週 今月 今四半期 今年),
+            }[locale]
+
             remaining_days_list = [
                 from_date.remaining_days(from_date.end_of_week, calendar),
                 from_date.remaining_days(from_date.end_of_month, calendar),
                 from_date.remaining_days(from_date.end_of_quater, calendar),
                 from_date.remaining_days(from_date.end_of_year, calendar),
             ]
+
+            remaining_percent_list = [
+                from_date.remaining_days(from_date.end_of_week, calendar) * 100.0 /
+                    from_date.beginning_of_week.remaining_days(from_date.end_of_week, calendar),
+                from_date.remaining_days(from_date.end_of_month, calendar) * 100.0 /
+                    from_date.beginning_of_month.remaining_days(from_date.end_of_month, calendar),
+                from_date.remaining_days(from_date.end_of_quater, calendar) * 100.0 /
+                    from_date.beginning_of_quater.remaining_days(from_date.end_of_quater, calendar),
+                from_date.remaining_days(from_date.end_of_year, calendar) * 100.0 /
+                    from_date.beginning_of_year.remaining_days(from_date.end_of_year, calendar),
+            ]
+
+            formatter = StringFormatter.new(LOCALE_TO_WDAY_TO_NAME_MAP[locale])
             puts formatter.format_table([
-                headers,
+                titles,
                 remaining_days_list.map{|days| "#{days}d"},
+                remaining_percent_list.map{|percent| sprintf('%.1f%%', percent)},
             ])
         end
     end
