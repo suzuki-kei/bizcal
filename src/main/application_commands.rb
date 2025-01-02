@@ -105,14 +105,10 @@ module ApplicationCommands
             ]
 
             remaining_percent_list = [
-                from_date.remaining_days(from_date.end_of_week, calendar) * 100.0 /
-                    from_date.beginning_of_week.remaining_days(from_date.end_of_week, calendar),
-                from_date.remaining_days(from_date.end_of_month, calendar) * 100.0 /
-                    from_date.beginning_of_month.remaining_days(from_date.end_of_month, calendar),
-                from_date.remaining_days(from_date.end_of_quater, calendar) * 100.0 /
-                    from_date.beginning_of_quater.remaining_days(from_date.end_of_quater, calendar),
-                from_date.remaining_days(from_date.end_of_year, calendar) * 100.0 /
-                    from_date.beginning_of_year.remaining_days(from_date.end_of_year, calendar),
+                remaining_percent(calendar, from_date, :week),
+                remaining_percent(calendar, from_date, :month),
+                remaining_percent(calendar, from_date, :quater),
+                remaining_percent(calendar, from_date, :year),
             ]
 
             formatter = StringFormatter.new(LOCALE_TO_WDAY_TO_NAME_MAP[locale])
@@ -222,6 +218,20 @@ module ApplicationCommands
         end
 
         lines
+    end
+
+    def remaining_percent(calendar, from_date, unit)
+        beginning_of_unit = from_date.send("beginning_of_#{unit}")
+        end_of_unit = from_date.send("end_of_#{unit}")
+
+        numerator = from_date.remaining_days(end_of_unit, calendar)
+        denominator = beginning_of_unit.remaining_days(end_of_unit, calendar)
+
+        if denominator == 0
+            0.0
+        else
+            numerator * 100.0 / denominator
+        end
     end
 
 end
